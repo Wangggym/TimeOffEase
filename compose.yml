@@ -1,4 +1,16 @@
 services:
+  # nginx
+  nginx:
+    container_name: nginx
+    image: nginx:1.0.0
+    build:
+      context: ./nginx
+      dockerfile: nginx.dockerfile
+    ports:
+      - "80:80"
+    networks:
+      - my-network
+
   # db service
   db:
     container_name: db
@@ -11,6 +23,10 @@ services:
       - 5432:5432
     volumes:
       - pgdata:/var/lib/postgresql/data
+    depends_on:
+      - nginx
+    networks:
+      - my-network   
 
   # flask service
   flaskapp:
@@ -25,6 +41,8 @@ services:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/postgres
     depends_on:
       - db
+    networks:
+      - my-network
 
   #nextjs service
   nextapp:
@@ -36,9 +54,15 @@ services:
     ports:
       - 3000:3000
     environment:
-    - NEXT_PUBLIC_API_URL=http://localhost:4000
+      - NEXT_PUBLIC_API_URL=http://localhost:4000
     depends_on:
       - flaskapp
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    driver: bridge
 
 volumes:
   pgdata: {}
