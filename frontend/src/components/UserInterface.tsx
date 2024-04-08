@@ -98,6 +98,7 @@ const UserInterface: React.FC<UserInterfaceProps> = ({ backendName }) => {
     <div
       className={`user-interface ${bgColor} ${backendName} w-full max-w-md p-4 my-4 rounded shadow`}
     >
+       {/* eslint-disable-next-line */}
       <img
         src={`/${backendName}logo.svg`}
         alt={`${backendName} Logo`}

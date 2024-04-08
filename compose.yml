@@ -10,6 +10,9 @@ services:
       - "80:80"
     networks:
       - my-network
+    depends_on:
+      - flaskapp
+      - nextapp
 
   # db service
   db:
@@ -23,8 +26,6 @@ services:
       - 5432:5432
     volumes:
       - pgdata:/var/lib/postgresql/data
-    depends_on:
-      - nginx
     networks:
       - my-network   
 
