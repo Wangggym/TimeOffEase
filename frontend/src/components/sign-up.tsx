@@ -6,8 +6,47 @@ import Link from "next/link";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/router";
+import { ChangeEventHandler, useState } from "react";
+import request from "@/service/WebClient";
+import { Authority } from "@/service/Authority";
+import { get } from "lodash";
 
 export function SignUp() {
+  const router = useRouter();
+
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleChangeUsername: ChangeEventHandler<HTMLInputElement> = (e) => {
+    setUsername(e.target.value);
+  };
+
+  const handleChangeEmail: ChangeEventHandler<HTMLInputElement> = (e) => {
+    setEmail(e.target.value);
+  };
+
+  const handleChangePassword: ChangeEventHandler<HTMLInputElement> = (e) => {
+    setPassword(e.target.value);
+  };
+
+  const handleClickSubmit = async () => {
+    const result = await request("/api/register", {
+      method: "post",
+      data: {
+        name: username,
+        email,
+        password,
+      },
+    });
+    const accessToken = get(result, "access_token");
+    if (accessToken) {
+      Authority.set(accessToken);
+      router.push("/");
+    }
+  };
+
   return (
     <div className="flex items-center min-h-screen px-6">
       <div className="w-full py-12 lg:py-24">
@@ -15,7 +54,7 @@ export function SignUp() {
           <h1 className="text-3xl font-bold">Create an account</h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">
             Already have an account?
-            <Link className="underline" href="#">
+            <Link className="underline" href="/login">
               Sign in
             </Link>
           </p>
@@ -24,7 +63,13 @@ export function SignUp() {
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
-              <Input id="username" placeholder="Enter your username" required />
+              <Input
+                id="username"
+                placeholder="Enter your username"
+                required
+                value={username}
+                onChange={handleChangeUsername}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -33,6 +78,8 @@ export function SignUp() {
                 placeholder="Enter your email"
                 required
                 type="email"
+                value={email}
+                onChange={handleChangeEmail}
               />
             </div>
             <div className="space-y-2">
@@ -42,9 +89,11 @@ export function SignUp() {
                 placeholder="Enter your password"
                 required
                 type="password"
+                value={password}
+                onChange={handleChangePassword}
               />
             </div>
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label htmlFor="confirm-password">Confirm Password</Label>
               <Input
                 id="confirm-password"
@@ -52,17 +101,19 @@ export function SignUp() {
                 required
                 type="password"
               />
-            </div>
-            <Button className="w-full">Sign Up</Button>
+            </div> */}
+            <Button className="w-full" onClick={handleClickSubmit}>
+              Sign Up
+            </Button>
           </div>
           <div className="flex flex-col justify-center space-y-4">
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {/* eslint-disable-next-line */}
-              By clicking the "Sign Up" button, you agree to our
+              By clicking the "Sign Up" button, you agree to our{" "}
               <Link className="underline" href="#">
                 Terms of Service
-              </Link>
-              and
+              </Link>{" "}
+              and{" "}
               <Link className="underline" href="#">
                 Privacy Policy
               </Link>

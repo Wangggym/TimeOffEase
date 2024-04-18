@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
+    "types": ["reflect-metadata"],
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
